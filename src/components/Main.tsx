@@ -7,30 +7,16 @@ type Rider = {
     destination: string;
 };
 
-const FAKE_RIDERS: Rider[] = [
-    {
-        id: "1",
-        name: "John Doe",
-        location: { lat: 37.7749, lon: -122.4194 },
-        destination: "Downtown"
-    },
-    {
-        id: "2",
-        name: "Jane Smith",
-        location: { lat: 37.7849, lon: -122.4094 },
-        destination: "Fisherman's Wharf"
-    }
-];
-
 export default function Main() {
     const [location, setLocation] = useState<GeolocationPosition | null>(null);
     const [destination, setDestination] = useState("");
     const [name, setName] = useState("");
-    const [riders, setRiders] = useState<Rider[]>(FAKE_RIDERS);
+    const [riders, setRiders] = useState<Rider[]>([]);
 
+    // 1. Get user location
     useEffect(() => {
         if (!navigator.geolocation) {
-            console.error("Geolocation is not supported by this browser.");
+            console.error("Geolocation is not supported.");
             return;
         }
         navigator.geolocation.getCurrentPosition(
@@ -39,20 +25,41 @@ export default function Main() {
         );
     }, []);
 
-    const handleSubmit = () => {
+    // 2. Fetch riders on mount
+    useEffect(() => {
+        fetch("http://localhost:3000/riders")
+            .then((res) => res.json())
+            .then(setRiders)
+            .catch((err) => console.error("Failed to fetch riders", err));
+    }, []);
+
+    // 3. Post new rider to backend
+    const handleSubmit = async () => {
         if (!location || !destination || !name) return;
-        const newRider: Rider = {
-            id: Date.now().toString(),
+
+        const newRider: Omit<Rider, "id"> = {
             name,
             location: {
                 lat: location.coords.latitude,
-                lon: location.coords.longitude
+                lon: location.coords.longitude,
             },
-            destination
+            destination,
         };
-        setRiders((prev) => [...prev, newRider]);
-        setDestination("");
-        setName("");
+
+        try {
+            const res = await fetch("http://localhost:3000/riders", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newRider),
+            });
+
+            const created = await res.json();
+            setRiders((prev) => [...prev, created]);
+            setDestination("");
+            setName("");
+        } catch (err) {
+            console.error("Failed to submit rider", err);
+        }
     };
 
     return (
@@ -62,7 +69,8 @@ export default function Main() {
 
             {location ? (
                 <p className="mb-4 text-sm text-gray-600">
-                    Your location: {location.coords.latitude.toFixed(4)}, {location.coords.longitude.toFixed(4)}
+                    Your location: {location.coords.latitude.toFixed(4)},{" "}
+                    {location.coords.longitude.toFixed(4)}
                 </p>
             ) : (
                 <p className="mb-4 text-sm text-gray-600">We are trying to get your location...</p>
@@ -93,14 +101,17 @@ export default function Main() {
 
             <div className="mt-6">
                 <h2 className="text-xl font-semibold mb-2">Other riders near you:</h2>
-                {riders.length === 0 && <p className="text-sm text-gray-500">No one else yet.</p>}
-                <ul>
-                    {riders.map((rider) => (
-                        <li key={rider.id} className="mb-2">
-                            <strong>{rider.name}</strong> ➡️ {rider.destination}
-                        </li>
-                    ))}
-                </ul>
+                {riders.length === 0 ? (
+                    <p className="text-sm text-gray-500">No one else yet.</p>
+                ) : (
+                    <ul>
+                        {riders.map((rider) => (
+                            <li key={rider.id} className="mb-2">
+                                <strong>{rider.name}</strong> ➡️ {rider.destination}
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
         </div>
     );
