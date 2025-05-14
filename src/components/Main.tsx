@@ -98,9 +98,9 @@ export default function Main() {
 
     return (
         <div className="p-4 font-sans">
-            <h1 className="text-2xl mb-2">✈️ Need a ride?</h1>
+            <h1 className="text-2xl mb-2">Want to split a ride? 🚕</h1>
             <p className="mb-4">See who's headed your way from the airport.</p>
-            <p className="mb-2 text-sm text-gray-500">Your username: <span className="font-mono">{username}</span></p>
+            <p className="mb-2 text-sm text-gray-500">Username: <span className="font-mono">{username}</span></p>
 
             {location ? (
                 <p className="mb-4 text-sm text-gray-600">
@@ -152,16 +152,18 @@ export default function Main() {
                 </ul>
             </div>
 
-            <div className="mt-6">
-                <h2 className="text-lg mb-2">Pending Chat Requests</h2>
-                <ul>
-                    {pendingChats.map((chat, idx) => (
-                        <li key={idx}>
-                            <p>Chat request from {chat.fromUserId}</p>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+            {pendingChats.length > 0 && (
+                <div className="mt-6">
+                    <h2 className="text-lg mb-2">Pending Chat Requests</h2>
+                    <ul>
+                        {pendingChats.map((chat, idx) => (
+                            <li key={idx}>
+                                <p>Chat request from {chat.fromUserId}</p>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </div>
     );
 }
