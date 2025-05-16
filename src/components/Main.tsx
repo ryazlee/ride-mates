@@ -3,11 +3,13 @@ import { createUsername } from "../util/username";
 import type { Rider } from "./types/rider";
 import NearbyRiders from "./NearbyRiders";
 import socket from "../socket/socket";
+import Chat from "./Chat";
 
 export default function Main() {
     const [location, setLocation] = useState<GeolocationPosition | null>(null);
     const [destination, setDestination] = useState("");
-    const [pendingChats, setPendingChats] = useState<{ fromUserId: string; roomId: string }[]>([]);
+    const [chatModalOpen, setChatModalOpen] = useState(false);
+    const [chatRoomId, setChatRoomId] = useState<string | null>(null);
 
     const [username] = useState(() => {
         const stored = localStorage.getItem("username");
@@ -30,17 +32,6 @@ export default function Main() {
 
     useEffect(() => {
         socket.emit("register_user", username);
-    }, []);
-
-    useEffect(() => {
-        const handleChatRequest = ({ fromUserId, roomId }: { fromUserId: string; roomId: string }) => {
-            setPendingChats((prev) => [...prev, { fromUserId, roomId }]);
-        };
-
-        socket.on("notify_chat_request", handleChatRequest);
-        return () => {
-            socket.off("notify_chat_request", handleChatRequest);
-        };
     }, []);
 
     const handleSubmit = async () => {
@@ -76,14 +67,18 @@ export default function Main() {
         <div className="p-4 font-sans">
             <h1 className="text-2xl mb-2">Want to split a ride? 🚕</h1>
             <p className="mb-4">See who's headed your way from the airport.</p>
-            <p className="mb-2 text-sm text-gray-500">Username: <span className="font-mono">{username}</span></p>
+            <p className="mb-2 text-sm text-gray-500">
+                Username: <span className="font-mono">{username}</span>
+            </p>
 
             {location ? (
                 <p className="mb-4 text-sm text-gray-600">
                     Your location: {location.coords.latitude.toFixed(4)}, {location.coords.longitude.toFixed(4)}
                 </p>
             ) : (
-                <p className="mb-4 text-sm text-gray-600">We are trying to get your location...</p>
+                <p className="mb-4 text-sm text-gray-600">
+                    We are trying to get your location...
+                </p>
             )}
 
             <input
@@ -101,19 +96,21 @@ export default function Main() {
                 I need a ride
             </button>
 
-            <NearbyRiders username={username} userLocation={location} />
+            <NearbyRiders
+                username={username}
+                userLocation={location}
+                onDidOpenChat={(roomId) => {
+                    setChatRoomId(roomId);
+                    setChatModalOpen(true);
+                }}
+            />
 
-            {pendingChats.length > 0 && (
-                <div className="mt-6">
-                    <h2 className="text-lg mb-2">Pending Chat Requests</h2>
-                    <ul>
-                        {pendingChats.map((chat, idx) => (
-                            <li key={idx}>
-                                <p>Chat request from {chat.fromUserId}</p>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+            {chatModalOpen && chatRoomId && (
+                <Chat
+                    username={username}
+                    roomId={chatRoomId}
+                    onDidCloseChat={() => setChatModalOpen(false)}
+                />
             )}
         </div>
     );
