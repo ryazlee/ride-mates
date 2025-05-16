@@ -1,20 +1,12 @@
 import { useEffect, useState } from "react";
 import { createUsername } from "../util/username";
-import { io } from "socket.io-client";
-
-const socket = io("http://localhost:3000");
-
-type Rider = {
-    id: string;
-    name: string;
-    location: { lat: number; lon: number };
-    destination: string;
-};
+import type { Rider } from "./types/rider";
+import NearbyRiders from "./NearbyRiders";
+import socket from "../socket/socket";
 
 export default function Main() {
     const [location, setLocation] = useState<GeolocationPosition | null>(null);
     const [destination, setDestination] = useState("");
-    const [riders, setRiders] = useState<Rider[]>([]);
     const [pendingChats, setPendingChats] = useState<{ fromUserId: string; roomId: string }[]>([]);
 
     const [username] = useState(() => {
@@ -50,22 +42,6 @@ export default function Main() {
             socket.off("notify_chat_request", handleChatRequest);
         };
     }, []);
-
-    useEffect(() => {
-        const fetchNearby = () => {
-            if (location) {
-                fetch(`http://localhost:3000/nearby_riders?lat=${location.coords.latitude}&lon=${location.coords.longitude}&maxDistance=10`)
-                    .then((res) => res.json())
-                    .then(setRiders)
-                    .catch((err) => console.error("Failed to fetch riders", err));
-            }
-        };
-
-        fetchNearby();
-        const interval = setInterval(fetchNearby, 5000); // refresh every 5 seconds
-
-        return () => clearInterval(interval);
-    }, [location]);
 
     const handleSubmit = async () => {
         if (!location || !destination) return;
@@ -125,32 +101,7 @@ export default function Main() {
                 I need a ride
             </button>
 
-            <div className="mt-6">
-                <h2 className="text-lg mb-2">Nearby Riders</h2>
-                <ul>
-                    {riders.map((rider) => (
-                        <li key={rider.id} className="flex items-center space-x-2 mb-2">
-                            <button
-                                onClick={() => {
-                                    socket.emit("start_chat_with", {
-                                        fromUserId: username,
-                                        toUserId: rider.id,
-                                        roomId: `${username}-${rider.id}`,
-                                    });
-                                }}
-                                className="bg-transparent hover:bg-gray-100 rounded p-1"
-                                style={{ cursor: "pointer" }}
-                                aria-label={`Chat with ${rider.name}`}
-                            >
-                                💬
-                            </button>
-                            <span>
-                                {rider.name} headed to {rider.destination}
-                            </span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+            <NearbyRiders username={username} userLocation={location} />
 
             {pendingChats.length > 0 && (
                 <div className="mt-6">
