@@ -81,20 +81,29 @@ export default function Main() {
                 </p>
             )}
 
-            <input
-                type="text"
-                placeholder="Enter your destination"
-                className="w-full p-2 mb-2 border rounded"
-                value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-            />
+            <div className="mb-4 flex flex-col gap-2">
+                <input
+                    type="text"
+                    placeholder="Destination"
+                    className="p-2 border rounded"
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
+                />
+                <button
+                    onClick={handleSubmit}
+                    className="bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300 transition"
+                >
+                    Need a ride
+                </button>
+            </div>
 
-            <button
-                onClick={handleSubmit}
-                className="w-full bg-gray-200 text-gray-700 p-3 rounded-lg text-lg hover:bg-gray-300 transition duration-200"
-            >
-                I need a ride
-            </button>
+            {chatModalOpen && chatRoomId && (
+                <Chat
+                    username={username}
+                    roomId={chatRoomId}
+                    onDidCloseChat={() => setChatModalOpen(false)}
+                />
+            )}
 
             <NearbyRiders
                 username={username}
@@ -105,13 +114,7 @@ export default function Main() {
                 }}
             />
 
-            {chatModalOpen && chatRoomId && (
-                <Chat
-                    username={username}
-                    roomId={chatRoomId}
-                    onDidCloseChat={() => setChatModalOpen(false)}
-                />
-            )}
+
         </div>
     );
 }

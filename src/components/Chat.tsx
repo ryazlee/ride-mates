@@ -51,6 +51,10 @@ export default function Chat({
                 </div>
 
                 <div className="h-48 overflow-y-auto text-sm border rounded p-2 mb-2 bg-gray-50 space-y-1">
+                    <div className="text-gray-500 text-center text-xs mb-2">
+                        Welcome to the chat room!  This Room will be deleted in 30 minutes, so we suggest you
+                        find a meeting point and time.  Happy chatting! 🚕
+                    </div>
                     {messages.map((msg, idx) => (
                         <div key={idx} className="break-words">{msg}</div>
                     ))}
