@@ -23,7 +23,10 @@ export default function DestinationForm({
                 placeholder="Enter your destination"
                 className="w-full p-2 border rounded text-sm"
             />
-            <button type="submit" className="ml-2 bg-blue-500 text-white p-2 rounded">
+            <button
+                type="submit"
+                className="ml-2 bg-blue-500 text-white p-2 rounded"
+            >
                 Submit
             </button>
         </form>

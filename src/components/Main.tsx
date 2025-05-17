@@ -22,9 +22,8 @@ export default function Main() {
 
     useEffect(() => {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                setLocation,
-                (err) => console.error("Location error", err)
+            navigator.geolocation.getCurrentPosition(setLocation, (err) =>
+                console.error("Location error", err)
             );
         } else {
             console.error("Geolocation is not supported.");
@@ -73,32 +72,34 @@ export default function Main() {
 
             {location ? (
                 <p className="mb-4 text-sm text-gray-600">
-                    Location: {location.coords.latitude.toFixed(4)}, {location.coords.longitude.toFixed(4)}
+                    Location: {location.coords.latitude.toFixed(4)},{" "}
+                    {location.coords.longitude.toFixed(4)}
                     <br />
-                    Destination: {destination && <span className="text-green-500">{destination}</span>}
+                    Destination:{" "}
+                    {destination && (
+                        <span className="text-green-500">{destination}</span>
+                    )}
                 </p>
             ) : (
                 <p className="mb-4 text-sm text-gray-600">
                     We are trying to get your location...
                 </p>
-            )
-            }
+            )}
 
-            {!destination && <DestinationForm onDidSubmit={handleDestinationFormSubmit} />}
+            {!destination && (
+                <DestinationForm onDidSubmit={handleDestinationFormSubmit} />
+            )}
 
-            {
-                chatModalOpen && chatRoomId && (
-                    <Chat
-                        username={username}
-                        roomId={chatRoomId}
-                        onDidCloseChat={() => setChatModalOpen(false)}
-                    />
-                )
-            }
+            {chatModalOpen && chatRoomId && (
+                <Chat
+                    username={username}
+                    roomId={chatRoomId}
+                    onDidCloseChat={() => setChatModalOpen(false)}
+                />
+            )}
 
-            {
-                destination && <>
-
+            {destination && (
+                <>
                     <NearbyRiders
                         username={username}
                         userLocation={location}
@@ -108,9 +109,7 @@ export default function Main() {
                         }}
                     />
                 </>
-            }
-
-
-        </div >
+            )}
+        </div>
     );
 }
