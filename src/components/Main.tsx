@@ -4,11 +4,12 @@ import type { Rider } from "./types/rider";
 import NearbyRiders from "./NearbyRiders";
 import socket from "../socket/socket";
 import Chat from "./Chat";
+import DestinationForm from "./DestinationForm";
 
 export default function Main() {
     const [location, setLocation] = useState<GeolocationPosition | null>(null);
-    const [destination, setDestination] = useState("");
     const [chatModalOpen, setChatModalOpen] = useState(false);
+    const [destination, setDestination] = useState<string | null>(null);
     const [chatRoomId, setChatRoomId] = useState<string | null>(null);
 
     const [username] = useState(() => {
@@ -34,8 +35,10 @@ export default function Main() {
         socket.emit("register_user", username);
     }, []);
 
-    const handleSubmit = async () => {
-        if (!location || !destination) return;
+    const handleDestinationFormSubmit = async (destination: string) => {
+        if (!location) return;
+
+        setDestination(destination);
 
         const newRider: Rider = {
             id: username,
@@ -55,9 +58,6 @@ export default function Main() {
             });
 
             if (!res.ok) throw new Error("Failed to post rider");
-
-            // No need to add to state here — the socket's "new_rider" event will do it
-            setDestination("");
         } catch (err) {
             console.error("Failed to submit rider", err);
         }
@@ -73,48 +73,44 @@ export default function Main() {
 
             {location ? (
                 <p className="mb-4 text-sm text-gray-600">
-                    Your location: {location.coords.latitude.toFixed(4)}, {location.coords.longitude.toFixed(4)}
+                    Location: {location.coords.latitude.toFixed(4)}, {location.coords.longitude.toFixed(4)}
+                    <br />
+                    Destination: {destination && <span className="text-green-500">{destination}</span>}
                 </p>
             ) : (
                 <p className="mb-4 text-sm text-gray-600">
                     We are trying to get your location...
                 </p>
-            )}
+            )
+            }
 
-            <div className="mb-4 flex flex-col gap-2">
-                <input
-                    type="text"
-                    placeholder="Destination"
-                    className="p-2 border rounded"
-                    value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
-                />
-                <button
-                    onClick={handleSubmit}
-                    className="bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300 transition"
-                >
-                    Need a ride
-                </button>
-            </div>
+            {!destination && <DestinationForm onDidSubmit={handleDestinationFormSubmit} />}
 
-            {chatModalOpen && chatRoomId && (
-                <Chat
-                    username={username}
-                    roomId={chatRoomId}
-                    onDidCloseChat={() => setChatModalOpen(false)}
-                />
-            )}
+            {
+                chatModalOpen && chatRoomId && (
+                    <Chat
+                        username={username}
+                        roomId={chatRoomId}
+                        onDidCloseChat={() => setChatModalOpen(false)}
+                    />
+                )
+            }
 
-            <NearbyRiders
-                username={username}
-                userLocation={location}
-                onDidOpenChat={(roomId) => {
-                    setChatRoomId(roomId);
-                    setChatModalOpen(true);
-                }}
-            />
+            {
+                destination && <>
+
+                    <NearbyRiders
+                        username={username}
+                        userLocation={location}
+                        onDidOpenChat={(roomId) => {
+                            setChatRoomId(roomId);
+                            setChatModalOpen(true);
+                        }}
+                    />
+                </>
+            }
 
 
-        </div>
+        </div >
     );
 }

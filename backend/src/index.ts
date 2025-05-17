@@ -59,7 +59,13 @@ function toRadians(degrees: number): number {
 // POST route to register a rider
 app.post("/riders", (req, res) => {
   const rider: Rider = { ...req.body };
+  const existingRider = riders.find(r => r.name=== rider.name);
+  if (existingRider) {
+    const index = riders.findIndex(r => r.name === rider.name);
+    riders[index] = rider;
+  } else {
   riders.push(rider);
+  }
 
   // Emit to all connected clients
   io.emit("new_rider", rider);

@@ -12,7 +12,6 @@ export default function NearbyRiders({
     onDidOpenChat: (roomId: string) => void;
 }) {
     const [riders, setRiders] = useState<Rider[]>([]);
-
     const [pendingChats, setPendingChats] = useState<{ fromUserId: string; roomId: string }[]>([]);
 
     useEffect(() => {
