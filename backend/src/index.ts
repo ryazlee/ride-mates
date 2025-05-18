@@ -2,6 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
+import { calculateHaversineDistance } from "./utils";
 
 const app = express();
 const httpServer = createServer(app);
@@ -59,31 +60,6 @@ const userSockets = new Map<string, { socketId: string; addedAt: number }>(); //
 const chats = new Map<string, { messages: string[]; createdAt: number }>();
 const chatNotified = new Map<string, Set<string>>(); // userId -> Set<roomId>
 
-// Haversine formula to calculate the distance between two geographical points
-function calculateDistance(
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number
-): number {
-    const R = 6371; // Radius of the Earth in km
-    const dLat = toRadians(lat2 - lat1);
-    const dLon = toRadians(lon2 - lon1);
-    const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(toRadians(lat1)) *
-            Math.cos(toRadians(lat2)) *
-            Math.sin(dLon / 2) *
-            Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // returns the distance in kilometers
-}
-
-// Helper function to convert degrees to radians
-function toRadians(degrees: number): number {
-    return degrees * (Math.PI / 180);
-}
-
 app.get("/check_username_exists", (req, res) => {
     const { username } = req.query;
     const existingRider = riders.find((r) => r.id === username);
@@ -115,7 +91,7 @@ app.get("/nearby_riders", (req, res) => {
     const nearbyRiders = riders.filter((rider) => {
         if (!rider.location || !rider.destination) return false;
 
-        const distance = calculateDistance(
+        const distance = calculateHaversineDistance(
             Number(lat),
             Number(lon),
             rider.location.lat,
@@ -199,7 +175,6 @@ const CLEANUP_INTERVAL = 60 * 1000; // every 1 min
 const EXPIRY_TIME = 60 * 60 * 1000; // 1 hour
 
 setInterval(() => {
-    console.log("[INFO] Running cleanup job...");
     const now = Date.now();
 
     // Clean riders
