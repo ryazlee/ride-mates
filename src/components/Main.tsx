@@ -106,7 +106,7 @@ export default function Main() {
                 <DestinationForm onDidSubmit={handleDestinationFormSubmit} />
             )}
 
-            {chatModalOpen && chatRoomId && (
+            {chatModalOpen && chatRoomId && username && (
                 <Chat
                     username={username}
                     roomId={chatRoomId}
@@ -114,7 +114,7 @@ export default function Main() {
                 />
             )}
 
-            {destination && (
+            {destination && username && (
                 <>
                     <NearbyRiders
                         username={username}
