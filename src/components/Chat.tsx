@@ -86,9 +86,9 @@ export default function Chat({
                     }}
                 >
                     <div className="text-gray-500 text-center text-xs mb-2">
-                        Welcome to the chat room! This room will be deleted in
-                        30 minutes, so we suggest you coordinate a meeting
-                        location and time. Happy chatting! 🚕
+                        Welcome to the chat room! This room will be deleted in 1
+                        hour, so we suggest you coordinate a meeting location
+                        and time. Happy chatting! 🚕
                     </div>
                     {messages.map((msg, idx) => {
                         // Extract username using regex: [HH:MM] username:
