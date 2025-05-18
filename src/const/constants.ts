@@ -209,16 +209,7 @@ export const ACCEPTABLE_TEXT_COLORS = [
     "#FF6F61", // Coral
     "#6B5B95", // Purple
     "#88B04B", // Green
-    "#F7CAC9", // Pink
-    "#92A8D1", // Blue
-    "#955251", // Brown
-    "#B565A7", // Violet
-    "#009B77", // Teal
-    "#DD4124", // Red
-    "#45B8AC", // Aqua
-    "#EFC050", // Gold
-    "#5B5EA6", // Indigo
-    "#9B2335", // Burgundy
+    "#C71585", // Medium Violet Red
     "#DFCFBE", // Sand
     "#BC243C", // Crimson
     "#98B4D4", // Sky Blue
@@ -234,6 +225,30 @@ export const ACCEPTABLE_TEXT_COLORS = [
     "#DC143C", // Crimson
     "#00BFFF", // Deep Sky Blue
     "#8A2BE2", // Blue Violet
-    "#00FF7F", // Spring Green
+    "#FF1493", // Deep Pink
+    "#7B68EE", // Medium Slate Blue
+    "#ADFF2F", // Green Yellow
+    "#FF6347", // Tomato
+    "#4682B4", // Steel Blue
+    "#D2691E", // Chocolate
+    "#92A8D1", // Blue
+    "#955251", // Brown
+    "#B565A7", // Violet
+    "#009B77", // Teal
+    "#DD4124", // Red
+    "#45B8AC", // Aqua
+    "#5B5EA6", // Indigo
+    "#9B2335", // Burgundy
+    "#FF8C00", // Dark Orange
+    "#B22222", // Fire Brick
+    "#8B008B", // Dark Magenta
+    "#FF7F50", // Coral
+    "#B8860B", // Dark Golden Rod
+    "#A0522D", // Sienna
+    "#CD5C5C", // Indian Red
+    "#FFB6C1", // Light Pink
+    "#2E8B57", // Sea Green
+    "#DDA0DD", // Plum
     "#FF4500", // Orange Red
+    "#7FFF00", // Chartreuse
 ];

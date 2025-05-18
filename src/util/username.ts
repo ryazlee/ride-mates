@@ -9,8 +9,7 @@ export const createUsername = () => {
 export const getColorFromUsername = (username: string) => {
     let hash = 0;
     for (let i = 0; i < username.length; i++) {
-        hash = (hash << 5) - hash + username.charCodeAt(i);
-        hash |= 0; // Convert to 32bit integer
+        hash = (hash * 31 + username.charCodeAt(i)) & 0xffffffff;
     }
     const idx = Math.abs(hash) % ACCEPTABLE_TEXT_COLORS.length;
     return ACCEPTABLE_TEXT_COLORS[idx];

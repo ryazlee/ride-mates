@@ -48,7 +48,7 @@ export default function Chat({
 
     return (
         <div className="flex z-50">
-            <div className="w-full max-w-md bg-white border-t border-gray-200 p-4 shadow-md rounded-lg">
+            <div className="w-full max-w-md bg-white border border-gray-200 p-4 shadow-lg rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-700">
                         {roomId}
@@ -75,7 +75,16 @@ export default function Chat({
                     </button>
                 </div>
 
-                <div className="h-48 overflow-y-auto text-sm border rounded p-2 mb-2 bg-gray-50 space-y-1">
+                <div
+                    className="h-48 overflow-y-auto text-sm border rounded p-2 mb-2 bg-gray-50 space-y-1"
+                    ref={(el) => {
+                        // Save ref for scrolling
+                        if (el) {
+                            // Scroll to bottom on mount/update
+                            el.scrollTop = el.scrollHeight;
+                        }
+                    }}
+                >
                     <div className="text-gray-500 text-center text-xs mb-2">
                         Welcome to the chat room! This room will be deleted in
                         30 minutes, so we suggest you coordinate a meeting
@@ -101,6 +110,11 @@ export default function Chat({
                 <input
                     className="w-full p-2 border rounded mb-2 text-sm"
                     value={message}
+                    onKeyUp={(e) => {
+                        if (e.key === "Enter") {
+                            sendMessage();
+                        }
+                    }}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Type a message..."
                 />
