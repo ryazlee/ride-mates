@@ -46,3 +46,13 @@ yarn dev
 ```
 
 5. Open the app in your browser
+
+# Production: <https://ride-mates-one.vercel.app/>
+
+## Frontend: Vercel
+
+The frontend is hosted on [Vercel](https://vercel.com/ryans-projects-85afbc4f/ride-mates). The app gets rebuilt on every commit to the main branch.
+
+## Backend: Render
+
+The backend is hosted on [Render](https://dashboard.render.com/project/prj-d0l1l93e5dus73c75200). The app gets rebuilt on every commit to the main branch. Right now, the app is hosted on the free service, but this may change in the future.

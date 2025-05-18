@@ -8,7 +8,7 @@ const httpServer = createServer(app);
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://ride-mates-one.vercel.app/",
+    "https://ride-mates-one.vercel.app",
 ];
 
 app.use(
