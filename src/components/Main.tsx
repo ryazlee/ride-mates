@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createUsername } from "../util/username";
+import { createUsername, getColorFromUsername } from "../util/username";
 import type { Rider } from "./types/rider";
 import NearbyRiders from "./NearbyRiders";
 import socket from "../socket/socket";
@@ -62,22 +62,45 @@ export default function Main() {
         }
     };
 
+    const getUserLocationStr = () => {
+        return `(${location?.coords.latitude.toFixed(
+            4
+        )}, ${location?.coords.latitude.toFixed(4)})`;
+    };
+
     return (
-        <div className="p-4 font-sans">
-            <h1 className="text-2xl mb-2">Want to split a ride? 🚕</h1>
-            <p className="mb-4">See who's headed your way from the airport.</p>
-            <p className="mb-2 text-sm text-gray-500">
-                Username: <span className="font-mono">{username}</span>
+        <div className="p-4 font-mono">
+            <h1 className="text-2xl mb-2">
+                Want to split the rideshare cost? 🚕
+            </h1>
+            <p className="mb-4">
+                See who else near you is headed to your destination
+            </p>
+            <p className="text-sm text-gray-600">
+                Username:{" "}
+                <span style={{ color: getColorFromUsername(username) }}>
+                    {username}
+                </span>
             </p>
 
             {location ? (
                 <p className="mb-4 text-sm text-gray-600">
-                    Location: {location.coords.latitude.toFixed(4)},{" "}
-                    {location.coords.longitude.toFixed(4)}
+                    Location:{" "}
+                    <span style={{ color: getColorFromUsername(username) }}>
+                        {getUserLocationStr()}
+                    </span>
                     <br />
-                    Destination:{" "}
                     {destination && (
-                        <span className="text-green-500">{destination}</span>
+                        <>
+                            Destination:{" "}
+                            <span
+                                style={{
+                                    color: getColorFromUsername(username),
+                                }}
+                            >
+                                {destination}
+                            </span>
+                        </>
                     )}
                 </p>
             ) : (

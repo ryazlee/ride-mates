@@ -20,7 +20,7 @@ export default function DestinationForm({
                 type="text"
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
-                placeholder="Enter your destination"
+                placeholder="Enter your destination...."
                 className="w-full p-2 border rounded text-sm"
             />
             <button

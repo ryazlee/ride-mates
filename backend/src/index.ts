@@ -104,6 +104,7 @@ app.get("/nearby_riders", (req, res) => {
 
 const userSockets = new Map<string, string>(); // userId -> socket.id
 const chatNotified = new Map<string, Set<string>>(); // userId -> Set<roomId>
+const chats = new Map<string, string[]>();
 
 io.on("connection", (socket) => {
     console.log("a user connected:", socket.id);
@@ -115,6 +116,10 @@ io.on("connection", (socket) => {
     });
 
     socket.on("start_chat_with", ({ fromUserId, toUserId, roomId }) => {
+        if (!chats.has(roomId)) {
+            chats.set(roomId, []);
+        }
+
         // Check if this user has already received a notification for this chat room
         const notifiedUsers = chatNotified.get(toUserId) || new Set();
 
@@ -134,12 +139,21 @@ io.on("connection", (socket) => {
     });
 
     socket.on("join_room", (roomId) => {
+        if (!chats.has(roomId)) {
+            chats.set(roomId, []);
+        }
+
         socket.join(roomId);
-        console.log(`Socket ${socket.id} joined room ${roomId}`);
+
+        // Emit to everyone in the room, including the joining socket
+        io.to(roomId).emit("all_messages", chats.get(roomId));
     });
 
     socket.on("send_message", ({ roomId, message }) => {
-        socket.to(roomId).emit("receive_message", message);
+        chats.get(roomId)?.push(message);
+
+        // Emit updated chat to all clients in the room
+        io.to(roomId).emit("all_messages", chats.get(roomId));
     });
 
     socket.on("disconnect", () => {

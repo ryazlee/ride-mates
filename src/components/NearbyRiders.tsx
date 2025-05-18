@@ -56,7 +56,7 @@ export default function NearbyRiders({
         socket.emit("start_chat_with", {
             fromUserId: username,
             toUserId: toUserId,
-            roomId: [username, roomId].sort().join("-"),
+            roomId: roomId,
         });
         onDidOpenChat(roomId);
     };
