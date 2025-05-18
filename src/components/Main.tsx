@@ -4,6 +4,7 @@ import NearbyRiders from "./NearbyRiders";
 import Chat from "./Chat";
 import DestinationForm from "./DestinationForm";
 import { api } from "../api";
+import type { Rider } from "./types/rider";
 
 export default function Main() {
     const [location, setLocation] = useState<GeolocationPosition | null>(null);
@@ -11,6 +12,7 @@ export default function Main() {
     const [destination, setDestination] = useState<string | null>(null);
     const [chatRoomId, setChatRoomId] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
+    const [nearbyRiders, setNearbyRiders] = useState<Rider[]>([]);
 
     useEffect(() => {
         const fetchUsername = async () => {
@@ -45,6 +47,14 @@ export default function Main() {
             console.error("Geolocation is not supported.");
         }
     }, []);
+
+    useEffect(() => {
+        if (location && username) {
+            api.getNearbyRiders(location, undefined, username).then(
+                setNearbyRiders
+            );
+        }
+    }, [location, username]);
 
     const handleDestinationFormSubmit = async (destination: string) => {
         if (!location || !username) return;
@@ -99,6 +109,14 @@ export default function Main() {
             ) : (
                 <p className="mb-4 text-sm text-gray-600">
                     Loading.... Please allow location access
+                </p>
+            )}
+
+            {nearbyRiders && nearbyRiders.length > 0 && (
+                <p className="text-xs text-gray-400 italic">
+                    There {nearbyRiders.length === 1 ? "is" : "are"}{" "}
+                    {nearbyRiders.length} rider
+                    {nearbyRiders.length === 1 ? "" : "s"} nearby!
                 </p>
             )}
 
