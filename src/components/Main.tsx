@@ -1,25 +1,40 @@
 import { useEffect, useState } from "react";
 import { createUsername, getColorFromUsername } from "../util/username";
-import type { Rider } from "./types/rider";
 import NearbyRiders from "./NearbyRiders";
-import socket from "../socket/socket";
 import Chat from "./Chat";
 import DestinationForm from "./DestinationForm";
-import { API_URL } from "../util/url";
+import { api } from "../api";
 
 export default function Main() {
     const [location, setLocation] = useState<GeolocationPosition | null>(null);
     const [chatModalOpen, setChatModalOpen] = useState(false);
     const [destination, setDestination] = useState<string | null>(null);
     const [chatRoomId, setChatRoomId] = useState<string | null>(null);
+    const [username, setUsername] = useState<string | null>(null);
 
-    const [username] = useState(() => {
-        const stored = localStorage.getItem("username");
-        if (stored) return stored;
-        const newUsername = createUsername();
-        localStorage.setItem("username", newUsername);
-        return newUsername;
-    });
+    useEffect(() => {
+        const fetchUsername = async () => {
+            const stored = localStorage.getItem("username");
+            if (stored) {
+                const exists = await api.checkUsernameExists(stored);
+                if (exists) {
+                    setUsername(stored);
+                    return;
+                }
+            }
+            localStorage.removeItem("username");
+            const newUsername = createUsername();
+            localStorage.setItem("username", newUsername);
+            setUsername(newUsername);
+        };
+        fetchUsername();
+    }, []);
+
+    useEffect(() => {
+        if (location && username) {
+            api.registerUser(username, location);
+        }
+    }, [location, username]);
 
     useEffect(() => {
         if (navigator.geolocation) {
@@ -31,36 +46,11 @@ export default function Main() {
         }
     }, []);
 
-    useEffect(() => {
-        socket.emit("register_user", username);
-    }, []);
-
     const handleDestinationFormSubmit = async (destination: string) => {
-        if (!location) return;
+        if (!location || !username) return;
 
         setDestination(destination);
-
-        const newRider: Rider = {
-            id: username,
-            name: username,
-            location: {
-                lat: location.coords.latitude,
-                lon: location.coords.longitude,
-            },
-            destination,
-        };
-
-        try {
-            const res = await fetch(`${API_URL}/new_rider`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newRider),
-            });
-
-            if (!res.ok) throw new Error("Failed to post rider");
-        } catch (err) {
-            console.error("Failed to submit rider", err);
-        }
+        api.updateRider(username, location, destination);
     };
 
     const getUserLocationStr = () => {
@@ -77,36 +67,38 @@ export default function Main() {
             <p className="mb-4">
                 See who else near you is headed to your destination
             </p>
-            <p className="text-sm text-gray-600">
-                Username:{" "}
-                <span style={{ color: getColorFromUsername(username) }}>
-                    {username}
-                </span>
-            </p>
 
-            {location ? (
-                <p className="mb-4 text-sm text-gray-600">
-                    Location:{" "}
-                    <span style={{ color: getColorFromUsername(username) }}>
-                        {getUserLocationStr()}
-                    </span>
-                    <br />
-                    {destination && (
-                        <>
-                            Destination:{" "}
-                            <span
-                                style={{
-                                    color: getColorFromUsername(username),
-                                }}
-                            >
-                                {destination}
-                            </span>
-                        </>
-                    )}
-                </p>
+            {location && username ? (
+                <>
+                    <p className="text-sm text-gray-600">
+                        Username:{" "}
+                        <span style={{ color: getColorFromUsername(username) }}>
+                            {username}
+                        </span>
+                    </p>
+                    <p className="mb-4 text-sm text-gray-600">
+                        Location:{" "}
+                        <span style={{ color: getColorFromUsername(username) }}>
+                            {getUserLocationStr()}
+                        </span>
+                        <br />
+                        {destination && (
+                            <>
+                                Destination:{" "}
+                                <span
+                                    style={{
+                                        color: getColorFromUsername(username),
+                                    }}
+                                >
+                                    {destination}
+                                </span>
+                            </>
+                        )}
+                    </p>
+                </>
             ) : (
                 <p className="mb-4 text-sm text-gray-600">
-                    We are trying to get your location...
+                    Loading.... Please allow location access
                 </p>
             )}
 

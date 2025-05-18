@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Rider } from "./types/rider";
 import socket from "../socket/socket";
 import { getColorFromUsername } from "../util/username";
-import { API_URL } from "../util/url";
+import { api } from "../api";
 
 type PendingChat = {
     fromUserId: string;
@@ -33,19 +33,14 @@ export default function NearbyRiders({
     }, []);
 
     useEffect(() => {
-        const fetchNearby = () => {
-            if (!userLocation) return;
-
-            const { latitude, longitude } = userLocation.coords;
-            fetch(
-                `${API_URL}/nearby_riders?lat=${latitude}&lon=${longitude}&maxDistance=2`
-            )
-                .then((res) => res.json())
-                .then((data: Rider[]) => {
-                    const filtered = data.filter((r) => r.id !== username);
-                    setRiders(filtered);
-                })
-                .catch((err) => console.error("Failed to fetch riders", err));
+        if (!userLocation) return;
+        const fetchNearby = async () => {
+            const nearbyRiders = await api.getNearbyRiders(
+                userLocation,
+                undefined,
+                username
+            );
+            setRiders(nearbyRiders);
         };
 
         fetchNearby();
@@ -103,10 +98,10 @@ export default function NearbyRiders({
                             <span>
                                 <span
                                     style={{
-                                        color: getColorFromUsername(rider.name),
+                                        color: getColorFromUsername(rider.id),
                                     }}
                                 >
-                                    {rider.name} ➡️ {rider.destination}
+                                    {rider.id} ➡️ {rider.destination}
                                 </span>
                             </span>
                         </li>

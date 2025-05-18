@@ -16,16 +16,21 @@ export default function Chat({
 }) {
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState<string[]>([]);
+    const [chatCreatedAt, setChatCreatedAt] = useState<Date | null>(null);
 
     useEffect(() => {
         socket.emit("join_room", roomId);
 
-        socket.on("all_messages", (allMessages: string[]) => {
-            setMessages(allMessages);
-        });
+        socket.on(
+            "chat_metadata",
+            (chatMetadata: { messages: string[]; createdAt: Date }) => {
+                setMessages(chatMetadata.messages);
+                setChatCreatedAt(chatMetadata.createdAt);
+            }
+        );
 
         return () => {
-            socket.off("all_messages");
+            socket.off("chat_metadata");
         };
     }, [roomId]);
 
@@ -48,6 +53,19 @@ export default function Chat({
                     <span className="text-sm font-medium text-gray-700">
                         {roomId}
                     </span>
+                    {chatCreatedAt && (
+                        <span className="text-xs text-gray-500 ml-2">
+                            Expires:{" "}
+                            {new Date(
+                                new Date(chatCreatedAt).getTime() +
+                                    60 * 60 * 1000
+                            ).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                            })}
+                        </span>
+                    )}
                     <button
                         onClick={onDidCloseChat}
                         className="text-gray-400 hover:text-gray-600 text-xl"
