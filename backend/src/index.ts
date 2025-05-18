@@ -155,7 +155,7 @@ io.on("connection", (socket) => {
     });
 });
 
-const PORT = 3000;
-httpServer.listen(PORT, () => {
-    console.log(`Backend running on http://localhost:${PORT}`);
+const port = process.env.PORT || 3000;
+httpServer.listen(port, () => {
+    console.log(`Backend running on http://localhost:${port}`);
 });
