@@ -56,7 +56,7 @@ export default function Main() {
     const getUserLocationStr = () => {
         return `(${location?.coords.latitude.toFixed(
             4
-        )}, ${location?.coords.latitude.toFixed(4)})`;
+        )}, ${location?.coords.longitude.toFixed(4)})`;
     };
 
     return (
