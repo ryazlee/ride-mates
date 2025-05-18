@@ -110,9 +110,6 @@ io.on("connection", (socket) => {
             addedAt: Date.now(),
         });
         chatNotified.set(userId, chatNotified.get(userId) || new Set());
-        console.log(
-            `[INFO] Registered user ${userId} with socket ${socket.id}`
-        );
     });
 
     socket.on("start_chat_with", ({ fromUserId, toUserId, roomId }) => {
