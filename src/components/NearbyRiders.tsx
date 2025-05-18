@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { Rider } from "./types/rider";
 import socket from "../socket/socket";
 import { getColorFromUsername } from "../util/username";
+import { API_URL } from "../util/url";
 
 type PendingChat = {
     fromUserId: string;
@@ -37,7 +38,7 @@ export default function NearbyRiders({
 
             const { latitude, longitude } = userLocation.coords;
             fetch(
-                `http://localhost:3000/nearby_riders?lat=${latitude}&lon=${longitude}&maxDistance=2`
+                `${API_URL}/nearby_riders?lat=${latitude}&lon=${longitude}&maxDistance=2`
             )
                 .then((res) => res.json())
                 .then((data: Rider[]) => {

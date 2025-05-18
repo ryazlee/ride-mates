@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { getColorFromUsername } from "../util/username";
+import { API_URL } from "../util/url";
 
-const socket = io("http://localhost:3000");
+const socket = io(API_URL);
 
 export default function Chat({
     username,

@@ -5,6 +5,7 @@ import NearbyRiders from "./NearbyRiders";
 import socket from "../socket/socket";
 import Chat from "./Chat";
 import DestinationForm from "./DestinationForm";
+import { API_URL } from "../util/url";
 
 export default function Main() {
     const [location, setLocation] = useState<GeolocationPosition | null>(null);
@@ -50,7 +51,7 @@ export default function Main() {
         };
 
         try {
-            const res = await fetch("http://localhost:3000/new_rider", {
+            const res = await fetch(`${API_URL}/new_rider`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(newRider),
