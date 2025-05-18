@@ -63,8 +63,7 @@ function toRadians(degrees: number): number {
     return degrees * (Math.PI / 180);
 }
 
-// POST route to register a rider
-app.post("/riders", (req, res) => {
+app.post("/new_rider", (req, res) => {
     const rider: Rider = { ...req.body };
     const existingRider = riders.find((r) => r.name === rider.name);
     if (existingRider) {
@@ -80,14 +79,9 @@ app.post("/riders", (req, res) => {
     res.status(200).json(rider); // send back with ID
 });
 
-// GET route to get all riders
-app.get("/riders", (req, res) => {
-    res.json(riders);
-});
-
 // GET route to filter nearby riders based on location and maxDistance (in km)
 app.get("/nearby_riders", (req, res) => {
-    const { lat, lon, maxDistance = 5 } = req.query; // maxDistance in km (default 5 km)
+    const { lat, lon, maxDistance = 2 } = req.query;
 
     const nearbyRiders = riders.filter((rider) => {
         const distance = calculateDistance(

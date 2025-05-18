@@ -37,7 +37,7 @@ export default function NearbyRiders({
 
             const { latitude, longitude } = userLocation.coords;
             fetch(
-                `http://localhost:3000/nearby_riders?lat=${latitude}&lon=${longitude}&maxDistance=10`
+                `http://localhost:3000/nearby_riders?lat=${latitude}&lon=${longitude}&maxDistance=2`
             )
                 .then((res) => res.json())
                 .then((data: Rider[]) => {

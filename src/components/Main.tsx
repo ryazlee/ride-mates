@@ -50,7 +50,7 @@ export default function Main() {
         };
 
         try {
-            const res = await fetch("http://localhost:3000/riders", {
+            const res = await fetch("http://localhost:3000/new_rider", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(newRider),
