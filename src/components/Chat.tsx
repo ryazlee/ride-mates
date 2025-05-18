@@ -41,7 +41,7 @@ export default function Chat({
     };
 
     return (
-        <div className="flex justify-center z-50">
+        <div className="flex z-50">
             <div className="w-full max-w-md bg-white border-t border-gray-200 p-4 shadow-md rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-700">

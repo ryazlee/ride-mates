@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Rider } from "./types/rider";
 import socket from "../socket/socket";
+import { getColorFromUsername } from "../util/username";
 
 type PendingChat = {
     fromUserId: string;
@@ -82,7 +83,7 @@ export default function NearbyRiders({
                                     onClick={() => {
                                         onDidOpenChatHandler(rider.id);
                                     }}
-                                    className="bg-transparent hover:bg-gray-100 rounded p-1"
+                                    className="bg-transparent hover:bg-gray-100 rounded pr-3"
                                     style={{ cursor: "pointer" }}
                                 >
                                     💬
@@ -93,13 +94,19 @@ export default function NearbyRiders({
                                     <span
                                         className="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full"
                                         style={{
-                                            transform: "translate(50%, -50%)",
+                                            transform: "translate(-50%, -50%)",
                                         }}
                                     />
                                 )}
                             </div>
                             <span>
-                                {rider.name} headed to {rider.destination}
+                                <span
+                                    style={{
+                                        color: getColorFromUsername(rider.name),
+                                    }}
+                                >
+                                    {rider.name} ➡️ {rider.destination}
+                                </span>
                             </span>
                         </li>
                     ))}
