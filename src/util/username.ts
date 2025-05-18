@@ -1,5 +1,4 @@
 import { ACCEPTABLE_TEXT_COLORS, ANIMALS, COLORS } from "../const/constants";
-import { API_URL } from "./url";
 
 export const createUsername = () => {
     const randomAnimal = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
