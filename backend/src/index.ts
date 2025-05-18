@@ -5,14 +5,34 @@ import cors from "cors";
 
 const app = express();
 const httpServer = createServer(app);
+
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://ride-mates-one.vercel.app/",
+];
+
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
+        methods: ["GET", "POST"],
+        credentials: true,
+    })
+);
+
 const io = new Server(httpServer, {
     cors: {
-        origin: "http://localhost:5173", // Vite frontend
+        origin: allowedOrigins,
         methods: ["GET", "POST"],
+        credentials: true,
     },
 });
 
-app.use(cors());
 app.use(express.json());
 
 type Rider = {
