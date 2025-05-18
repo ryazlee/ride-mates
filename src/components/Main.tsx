@@ -112,7 +112,7 @@ export default function Main() {
                 </p>
             )}
 
-            {nearbyRiders && nearbyRiders.length > 0 && (
+            {nearbyRiders && !destination && nearbyRiders.length > 0 && (
                 <p className="text-xs text-gray-400 italic">
                     There {nearbyRiders.length === 1 ? "is" : "are"}{" "}
                     {nearbyRiders.length} rider

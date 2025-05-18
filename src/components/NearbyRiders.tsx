@@ -60,7 +60,7 @@ export default function NearbyRiders({
 
     return (
         <div className="mt-6">
-            <h2 className="text-lg mb-2">Nearby Riders</h2>
+            <h2 className="mb-2">{`Nearby Riders (${riders.length})`}</h2>
             {riders.length === 0 ? (
                 <p className="text-sm text-gray-500">
                     No one nearby yet. Check back soon!
